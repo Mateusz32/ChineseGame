@@ -1,24 +1,16 @@
 package com.chinesegame;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,13 +19,55 @@ import java.util.Map;
 
 public class Pages {
 
-    StackPane stackPanePageRules = new StackPane();
-    Scene pageRules, pageGame1, pageGame2, pageGame3, pageGame4;
     int width = 840;
     int height = 660;
+    Stage window = new Stage();
 
-    public Scene getPageRule(Stage window, Scene pageIntroduce) {
+    public Scene getPageIntroduce() {
 
+        BackGraound backGraound = new BackGraound();
+        StackPane stackPanePageIntroduce = new StackPane();
+
+        stackPanePageIntroduce.setBackground(backGraound.getMenuBackGround());
+        Text text = new Text("Welcome to the Chiness Game");
+        stackPanePageIntroduce.setAlignment(text, Pos.TOP_CENTER);
+        stackPanePageIntroduce.setMargin(text, new Insets(20));
+
+        Button Start = new Button("Start");
+        Button Rules = new Button("Rules");
+        Button EndGame = new Button("End Game");
+
+        Start.setPrefSize(100, 50);
+        Rules.setPrefSize(100, 50);
+        EndGame.setPrefSize(100, 50);
+
+        stackPanePageIntroduce.setAlignment(Start, Pos.TOP_CENTER);
+        stackPanePageIntroduce.setMargin(Start, new Insets(200, 0, 0, 0));
+        stackPanePageIntroduce.setAlignment(Rules, Pos.TOP_CENTER);
+        stackPanePageIntroduce.setMargin(Rules, new Insets(300, 0, 0, 0));
+        stackPanePageIntroduce.setAlignment(EndGame, Pos.TOP_CENTER);
+        stackPanePageIntroduce.setMargin(EndGame, new Insets(400, 0, 0, 0));
+        stackPanePageIntroduce.getChildren().addAll(text, Start, Rules, EndGame);
+
+        Scene pageIntroduce = new Scene(stackPanePageIntroduce, width, height, Color.WHITESMOKE);
+
+        Start.setOnAction(e -> {
+            Scene pageOptions = getPageOptions();
+            window.setScene(pageOptions);
+        });
+        Rules.setOnAction(e -> {
+            Scene pageRules = getPageRule();
+            window.setScene(pageRules);
+        });
+        EndGame.setOnAction(e -> window.close());
+        window.setTitle("Menu Chinese Game");
+        window.setScene(pageIntroduce);
+        window.show();
+        return pageIntroduce;
+    }
+
+    public Scene getPageRule() {
+        StackPane stackPanePageRules = new StackPane();
         Text rules = new Text("The ruls of game:" + "\n"
                 + "- The game need two, three or four players." + "\n"
                 + "- Each player has 4 pawns. Each 4 pawns of players are the same color (yellow, greeen, red, blue." + "\n"
@@ -50,9 +84,16 @@ public class Pages {
         stackPanePageRules.setAlignment(back, Pos.BOTTOM_LEFT);
         stackPanePageRules.setMargin(back, new Insets(0, 0, 10, 10));
         stackPanePageRules.setMargin(rules, new Insets(30, 30, 30, 30));
-        back.setOnAction(e -> window.setScene(pageIntroduce));
+
+        back.setOnAction(e -> {
+            Scene pageIntroduce = getPageIntroduce();
+            window.setScene(pageIntroduce);
+        });
+
         stackPanePageRules.getChildren().addAll(back, rules);
-        pageRules = new Scene(stackPanePageRules, width, height, Color.BLACK);
+        Scene pageRules = new Scene(stackPanePageRules, width, height, Color.BLACK);
+        window.setScene(pageRules);
+        window.show();
         return pageRules;
     }
 
@@ -62,97 +103,157 @@ public class Pages {
     RowConstraints row = new RowConstraints();
     ColumnConstraints column = new ColumnConstraints();
     BackGraound game = new BackGraound();
-    GridPane gridPageGame1 = new GridPane();
-    GridPane gridPageGame2 = new GridPane();
-    GridPane gridPageGame3 = new GridPane();
-    GridPane gridPageGame4 = new GridPane();
     int actualPositionOfYellow = 0;
     int actualPositionOfGreen = 0;
     int actualPositionOfRed = 0;
     int actualPositionOfBlue = 0;
 
-    TextField namePalyer1 = new TextField();
-    TextField namePalyer2 = new TextField();
-    TextField namePalyer3 = new TextField();
-    TextField namePalyer4 = new TextField();
-
-    public Scene getPageOptions(Stage window, Scene pageIntroduce) {
-
+    public Scene getPageOptions() {
+        StackPane stackPanePageOptions = new StackPane();
+        TextField namePalyer1 = new TextField();
+        TextField namePalyer2 = new TextField();
+        TextField namePalyer3 = new TextField();
+        TextField namePalyer4 = new TextField();
         Label label = new Label("How many player will be play?");
         stackPanePageOptions.setAlignment(label, Pos.TOP_CENTER);
         stackPanePageOptions.setMargin(label, new Insets(70, 0, 0, 0));
 
-        TextField input = new TextField();
-        stackPanePageOptions.setAlignment(input, Pos.TOP_CENTER);
-        stackPanePageOptions.setMargin(input, new Insets(100, 400, 0, 400));
-
-        Button enter = new Button("Enter");
-        stackPanePageOptions.setAlignment(enter, Pos.TOP_CENTER);
-        stackPanePageOptions.setMargin(enter, new Insets(150, 0, 0, 0));
-
         Button next = new Button("Next");
         stackPanePageOptions.setAlignment(next, Pos.BOTTOM_RIGHT);
         stackPanePageOptions.setMargin(next, new Insets(0, 10, 10, 0));
+        stackPanePageOptions.getChildren().removeAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next);
 
-        enter.setOnAction((new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                int numberOfPlayer = Integer.parseInt(input.getText());
+        MenuItem item1 = new MenuItem("1");
+        MenuItem item2 = new MenuItem("2");
+        MenuItem item3 = new MenuItem("3");
+        MenuItem item4 = new MenuItem("4");
+        MenuItem item5 = new MenuItem("Beginer");
+        MenuItem item6 = new MenuItem("Medium");
+        MenuItem item7 = new MenuItem("Hard");
 
-                if (numberOfPlayer == 1) {
-                    stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 400, 0, 400));
-                    stackPanePageOptions.getChildren().addAll(namePalyer1, next);
-                    next.setOnAction(e -> window.setScene(pageGame1));
-                }
-                if (numberOfPlayer == 2) {
-                    stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 400, 0, 400));
-                    stackPanePageOptions.setAlignment(namePalyer2, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer2, new Insets(250, 400, 0, 400));
-                    stackPanePageOptions.getChildren().addAll(namePalyer1, namePalyer2, next);
-                    next.setOnAction(e -> window.setScene(pageGame2));
-                }
-                if (numberOfPlayer == 3) {
-                    stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 400, 0, 400));
-                    stackPanePageOptions.setAlignment(namePalyer2, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer2, new Insets(250, 400, 0, 400));
-                    stackPanePageOptions.setAlignment(namePalyer3, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer3, new Insets(300, 400, 0, 400));
-                    stackPanePageOptions.getChildren().addAll(namePalyer1, namePalyer2, namePalyer3, next);
-                    next.setOnAction(e -> window.setScene(pageGame3));
-                }
+        MenuButton menuButton = new MenuButton(item1.getText(), null, item1, item2, item3, item4);
+        stackPanePageOptions.setAlignment(menuButton, Pos.TOP_CENTER);
+        stackPanePageOptions.setMargin(menuButton, new Insets(200));
+        MenuButton menuButton2 = new MenuButton(item6.getText(), null, item5, item6, item7);
+        stackPanePageOptions.setAlignment(menuButton2, Pos.TOP_CENTER);
+        stackPanePageOptions.setMargin(menuButton2, new Insets(400, 300, 0, 300));
+        Label comment = new Label("Set names of players");
+        Scene pageIntroduce = getPageIntroduce();
 
-                if (numberOfPlayer == 4) {
-                    stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 200, 0, 500));
-                    stackPanePageOptions.setAlignment(namePalyer2, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer2, new Insets(250, 200, 0, 500));
-                    stackPanePageOptions.setAlignment(namePalyer3, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer3, new Insets(300, 200, 0, 500));
-                    stackPanePageOptions.setAlignment(namePalyer4, Pos.TOP_CENTER);
-                    stackPanePageOptions.setMargin(namePalyer4, new Insets(350, 200, 0, 500));
-                    stackPanePageOptions.getChildren().addAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next);
-                    next.setOnAction(e -> window.setScene(pageGame4));
+        item1.setOnAction(e -> {
+            menuButton.setText(item1.getText());
+            stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 200, 0, 500));
+            stackPanePageOptions.getChildren().removeAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next,comment);
+            stackPanePageOptions.getChildren().addAll(namePalyer1, next);
+            next.setOnAction(event -> {
+                if (namePalyer1.getText().isEmpty()) {
+                    stackPanePageOptions.setMargin(comment, new Insets(500, 200, 0, 200));
+                    stackPanePageOptions.getChildren().removeAll(comment);
+                    stackPanePageOptions.getChildren().addAll(comment);
+                } else {
+                    Scene pageGame1 = getPageGame1(namePalyer1.getText(), menuButton2.getText());
+                    next.setOnAction(f -> window.setScene(pageGame1));
+                    next.fire();
                 }
-            }
-        }));
+            });
+        });
+        item2.setOnAction(e -> {
+            menuButton.setText(item2.getText());
+            stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 200, 0, 500));
+            stackPanePageOptions.setAlignment(namePalyer2, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer2, new Insets(250, 200, 0, 500));
+            stackPanePageOptions.getChildren().removeAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next,comment);
+            stackPanePageOptions.getChildren().addAll(namePalyer1, namePalyer2, next);
+            next.setOnAction(event -> {
+                if (namePalyer1.getText().isEmpty() || namePalyer2.getText().isEmpty()) {
+                    stackPanePageOptions.setMargin(comment, new Insets(500, 200, 0, 200));
+                    stackPanePageOptions.getChildren().removeAll(comment);
+                    stackPanePageOptions.getChildren().addAll(comment);
+                } else {
+                    Scene pageGame2 = getPageGame2(namePalyer1.getText(), namePalyer2.getText(), menuButton2.getText());
+                    next.setOnAction(f -> window.setScene(pageGame2));
+                    next.fire();
+                }
+            });
+        });
+        item3.setOnAction(e -> {
+            menuButton.setText(item3.getText());
+            stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 200, 0, 500));
+            stackPanePageOptions.setAlignment(namePalyer2, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer2, new Insets(250, 200, 0, 500));
+            stackPanePageOptions.setAlignment(namePalyer3, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer3, new Insets(300, 200, 0, 500));
+            stackPanePageOptions.getChildren().removeAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next,comment);
+            stackPanePageOptions.getChildren().addAll(namePalyer1, namePalyer2, namePalyer3, next);
+            next.setOnAction(event -> {
+                if (namePalyer1.getText().isEmpty() || namePalyer2.getText().isEmpty() || namePalyer3.getText().isEmpty()) {
+                    stackPanePageOptions.setMargin(comment, new Insets(500, 200, 0, 200));
+                    stackPanePageOptions.getChildren().removeAll(comment);
+                    stackPanePageOptions.getChildren().addAll(comment);
+                } else {
+                    Scene pageGame3 = getPageGame3(namePalyer1.getText(), namePalyer2.getText(), namePalyer3.getText(), menuButton2.getText());
+                    next.setOnAction(f -> window.setScene(pageGame3));
+                    next.fire();
+                }
+            });
+        });
+        item4.setOnAction(e -> {
+            menuButton.setText(item4.getText());
+            stackPanePageOptions.setAlignment(namePalyer1, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer1, new Insets(200, 200, 0, 500));
+            stackPanePageOptions.setAlignment(namePalyer2, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer2, new Insets(250, 200, 0, 500));
+            stackPanePageOptions.setAlignment(namePalyer3, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer3, new Insets(300, 200, 0, 500));
+            stackPanePageOptions.setAlignment(namePalyer4, Pos.TOP_CENTER);
+            stackPanePageOptions.setMargin(namePalyer4, new Insets(350, 200, 0, 500));
+            stackPanePageOptions.getChildren().removeAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next,comment);
+            stackPanePageOptions.getChildren().addAll(namePalyer1, namePalyer2, namePalyer3, namePalyer4, next);
+            next.setOnAction(event -> {
+                if (namePalyer1.getText().isEmpty() || namePalyer2.getText().isEmpty() || namePalyer3.getText().isEmpty() || namePalyer4.getText().isEmpty()) {
+                    stackPanePageOptions.setMargin(comment, new Insets(500, 200, 0, 200));
+                    stackPanePageOptions.getChildren().removeAll(comment);
+                    stackPanePageOptions.getChildren().addAll(comment);
+                } else {
+                    Scene pageGame4 = getPageGame4(namePalyer1.getText(), namePalyer2.getText(), namePalyer3.getText(), namePalyer4.getText(), menuButton2.getText());
+                    next.setOnAction(f -> window.setScene(pageGame4));
+                    next.fire();
+                }
+            });
+        });
+        item5.setOnAction(e -> {
+            menuButton2.setText(item5.getText());
+        });
+        item6.setOnAction(e -> {
+            menuButton2.setText(item6.getText());
+        });
+        item7.setOnAction(e -> {
+            menuButton2.setText(item7.getText());
+        });
+
+        stackPanePageOptions.getChildren().addAll(menuButton, menuButton2);
 
         Button back = new Button("Back");
         stackPanePageOptions.setAlignment(back, Pos.BOTTOM_LEFT);
         stackPanePageOptions.setMargin(back, new Insets(0, 0, 10, 10));
-        back.setOnAction(e -> window.setScene(pageIntroduce));
 
-        stackPanePageOptions.getChildren().addAll(input, enter, label);
-        pageOptions = new Scene(stackPanePageOptions, width, height, Color.WHITESMOKE);
+        back.setOnAction(e -> {
+            window.setScene(pageIntroduce);
+        });
+
+        stackPanePageOptions.getChildren().addAll(label, back);
+        Scene pageOptions = new Scene(stackPanePageOptions, width, height, Color.WHITESMOKE);
 
         return pageOptions;
     }
 
-    public Scene getPageGame1(Stage window, Scene pageIntroduce) {
+    public Scene getPageGame1(String namePlayer1, String level) {
+        GridPane gridPageGame1 = new GridPane();
         int numbersOfPlayers = 1;
-        //List of yellow pawns in home
+
         List<Pawn> homeYellowPawns = new ArrayList<>();
         Pawn yellow1 = new Pawn();
         Pawn yellow2 = new Pawn();
@@ -199,7 +300,7 @@ public class Pages {
         homeBluePawns.add(blue2);
         homeBluePawns.add(blue3);
         homeBluePawns.add(blue4);
-
+//
         List<Pawn> baseOfYellowPawns = new ArrayList<>();
         List<Pawn> baseOfRedPawns = new ArrayList<>();
         List<Pawn> baseOfGreenPawns = new ArrayList<>();
@@ -230,7 +331,7 @@ public class Pages {
         homeBlue.put(4, new Point(1, 10));
 
         List<List> ranking = new ArrayList<>();
-
+//
         ListOfPositions yellowList = new ListOfPositions();
         Map<Integer, Point> roadOfYellowPawns = yellowList.positionForYellowPawns();
         ListOfPositions greeenList = new ListOfPositions();
@@ -307,7 +408,7 @@ public class Pages {
         gridPageGame1.setGridLinesVisible(false); //Powoduje widocznośc lub niewidoczność poidzału planszy kolumny iw iersze
 
         //Buttons
-        Button buttonOfYellow = new Button("Yellow get move");
+        Button buttonOfYellow = new Button(namePlayer1 + " get move");
         Button buttonOfGreen = new Button("Green get move");
         Button buttonOfRed = new Button("Red get move");
         Button buttonOfBlue = new Button("Blue get move");
@@ -317,6 +418,13 @@ public class Pages {
         Label labelOfGreen = new Label("Dice result:" + textDice);
         Label labelOfRed = new Label("Dice result:" + textDice);
         Label labelOfBlue = new Label("Dice result:" + textDice);
+        Label whoWin = new Label("Ranking: ");
+        Label levelOfGame = new Label("Level: " + level);
+        Label firstPlace = new Label();
+        Label secendPlace = new Label();
+        Label thirdPlace = new Label();
+        Label fourthPlace = new Label();
+        Label endGames = new Label();
 
         GridPane.setConstraints(buttonOfYellow, 2, 0, 2, 2);
         GridPane.setConstraints(buttonOfGreen, 11, 0, 2, 2);
@@ -328,6 +436,12 @@ public class Pages {
         GridPane.setConstraints(labelOfBlue, 2, 10, 2, 1);
         GridPane.setConstraints(endGame, 13, 10, 3, 1);
         GridPane.setConstraints(whoStart, 13, 1, 3, 1);
+        GridPane.setConstraints(whoWin, 13, 4, 3, 1);
+        GridPane.setConstraints(levelOfGame, 13, 2, 3, 1);
+        GridPane.setConstraints(firstPlace, 13, 5, 3, 1);
+        GridPane.setConstraints(secendPlace, 13, 6, 3, 1);
+        GridPane.setConstraints(thirdPlace, 13, 7, 3, 1);
+        GridPane.setConstraints(fourthPlace, 13, 8, 3, 1);
 
         gridPageGame1.setMargin(endGame, new Insets(0, 100, 10, 0));
 
@@ -336,204 +450,199 @@ public class Pages {
         buttonOfRed.setDisable(true);
         buttonOfBlue.setDisable(true);
 
+        gridPageGame1.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue,
+                labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart, endGame, whoWin, levelOfGame);
+
+
         // Set player who start the game
-        whoStart.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                moves.whoStart(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
-                whoStart.setDisable(true);
-            }
+        whoStart.setOnAction(event -> {
+            moves.whoStart(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
+            whoStart.setDisable(true);
         });
 
-        gridPageGame1.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart,endGame);
+        buttonOfYellow.setOnAction(event -> {
 
-        buttonOfYellow.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+            //This method generatet and display dice result
+            int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfYellow, level, labelOfYellow, gridPageGame1);
 
-                //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfYellow, gridPageGame1);
+            // This method decides if the pawn can leave the base
+            int startPositionFromMethod = (moves.pawnsMove(result, baseOfYellowPawns, homeYellowPawns,
+                    imageView1, imageView2, imageView3, imageView4,
+                    roadOfYellowPawns, gridPageGame1, actualPositionOfYellow));
+            actualPositionOfYellow = startPositionFromMethod;
 
-                // This method decides if the pawn can leave the base
-                int startPositionFromMethod = (moves.pawnsMove(result, baseOfYellowPawns, homeYellowPawns,
-                        imageView1, imageView2, imageView3, imageView4,
-                        roadOfYellowPawns, gridPageGame1, actualPositionOfYellow));
-                actualPositionOfYellow = startPositionFromMethod;
+            // This method decides move pawn outside of base
+            startPositionFromMethod = moves.moveFromBase(result, homeYellowPawns, baseOfYellowPawns,
+                    imageView1, imageView2, imageView3, imageView4,
+                    roadOfYellowPawns, gridPageGame1, actualPositionOfYellow);
+            actualPositionOfYellow = startPositionFromMethod;
 
-                // This method decides move pawn outside of base
-                startPositionFromMethod = moves.moveFromBase(result, homeYellowPawns, baseOfYellowPawns,
-                        imageView1, imageView2, imageView3, imageView4,
-                        roadOfYellowPawns, gridPageGame1, actualPositionOfYellow);
-                actualPositionOfYellow = startPositionFromMethod;
+            //These three methods analyze the capture of a pawn by a pawn in motion
+            actualPositionOfGreen = moves.pawnBeatGreenPawn(actualPositionOfYellow, actualPositionOfGreen,
+                    roadOfYellowPawns, roadOfGreenPawns,
+                    imageView5, imageView6, imageView7, imageView8,
+                    homeGreenPawns, homeGreen, gridPageGame1);
 
-                //These three methods analyze the capture of a pawn by a pawn in motion
-                actualPositionOfGreen = moves.pawnBeatGreenPawn(actualPositionOfYellow, actualPositionOfGreen,
-                        roadOfYellowPawns, roadOfGreenPawns,
-                        imageView5, imageView6, imageView7, imageView8,
-                        homeGreenPawns, homeGreen, gridPageGame1);
+            actualPositionOfRed = moves.pawnBeatRedPawn(actualPositionOfYellow, actualPositionOfRed,
+                    roadOfYellowPawns, roadOfRedPawns,
+                    imageView9, imageView10, imageView11, imageView12,
+                    homeRedPawns, homeRed, gridPageGame1);
 
-                actualPositionOfRed = moves.pawnBeatRedPawn(actualPositionOfYellow, actualPositionOfRed,
-                        roadOfYellowPawns, roadOfRedPawns,
-                        imageView9, imageView10, imageView11, imageView12,
-                        homeRedPawns, homeRed, gridPageGame1);
+            actualPositionOfBlue = moves.pawnBeatBluePawn(actualPositionOfYellow, actualPositionOfBlue,
+                    roadOfYellowPawns, roadOfBluePawns,
+                    imageView13, imageView14, imageView15, imageView16,
+                    homeBluePawns, homeBlue, gridPageGame1);
 
-                actualPositionOfBlue = moves.pawnBeatBluePawn(actualPositionOfYellow, actualPositionOfBlue,
-                        roadOfYellowPawns, roadOfBluePawns,
-                        imageView13, imageView14, imageView15, imageView16,
-                        homeBluePawns, homeBlue, gridPageGame1);
+            //This method check who Player's won
+            moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                    buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame1);
 
-                //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+            //This method decided about able or disable buttons depending of turn and full of bases
+            moves.buttonsAbleAndDisable(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns,
+                    buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, ranking);
 
-                //This method decided about able or disable buttons depending of turn and full of bases
-                moves.buttonsAbleAndDisable(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns,
-                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, ranking);
-
-                //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
-            }
+            //This method decided about moves pawns belong to computer
+            moves.computerMove(buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
         });
-        buttonOfGreen.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfGreen, gridPageGame1);
+        buttonOfGreen.setOnAction(event -> {
+            //This method generatet and display dice result
+            int result = dice.generatedAndDisplayResultForComputerPlayer(actualPositionOfGreen, level, labelOfGreen, gridPageGame1);
 
-                // This method decides if the pawn can leave the base
-                int startPositionFromMethod = (moves.pawnsMove(result, baseOfGreenPawns, homeGreenPawns,
-                        imageView5, imageView6, imageView7, imageView8,
-                        roadOfGreenPawns, gridPageGame1, actualPositionOfGreen));
-                actualPositionOfGreen = startPositionFromMethod;
+            // This method decides if the pawn can leave the base
+            int startPositionFromMethod = (moves.pawnsMove(result, baseOfGreenPawns, homeGreenPawns,
+                    imageView5, imageView6, imageView7, imageView8,
+                    roadOfGreenPawns, gridPageGame1, actualPositionOfGreen));
+            actualPositionOfGreen = startPositionFromMethod;
 
-                // This method decides move pawn outside of base
-                startPositionFromMethod = moves.moveFromBase(result, homeGreenPawns, baseOfGreenPawns,
-                        imageView5, imageView6, imageView7, imageView8,
-                        roadOfGreenPawns, gridPageGame1, actualPositionOfGreen);
-                actualPositionOfGreen = startPositionFromMethod;
+            // This method decides move pawn outside of base
+            startPositionFromMethod = moves.moveFromBase(result, homeGreenPawns, baseOfGreenPawns,
+                    imageView5, imageView6, imageView7, imageView8,
+                    roadOfGreenPawns, gridPageGame1, actualPositionOfGreen);
+            actualPositionOfGreen = startPositionFromMethod;
 
-                //These three methods analyze the capture of a pawn by a pawn in motion
-                actualPositionOfYellow = moves.pawnBeatYellowPawn(actualPositionOfGreen, actualPositionOfYellow,
-                        roadOfGreenPawns, roadOfYellowPawns,
-                        imageView1, imageView2, imageView3, imageView4,
-                        homeYellowPawns, homeYellow, gridPageGame1);
+            //These three methods analyze the capture of a pawn by a pawn in motion
+            actualPositionOfYellow = moves.pawnBeatYellowPawn(actualPositionOfGreen, actualPositionOfYellow,
+                    roadOfGreenPawns, roadOfYellowPawns,
+                    imageView1, imageView2, imageView3, imageView4,
+                    homeYellowPawns, homeYellow, gridPageGame1);
 
-                actualPositionOfRed = moves.pawnBeatRedPawn(actualPositionOfGreen, actualPositionOfRed,
-                        roadOfGreenPawns, roadOfRedPawns,
-                        imageView9, imageView10, imageView11, imageView12,
-                        homeRedPawns, homeRed, gridPageGame1);
+            actualPositionOfRed = moves.pawnBeatRedPawn(actualPositionOfGreen, actualPositionOfRed,
+                    roadOfGreenPawns, roadOfRedPawns,
+                    imageView9, imageView10, imageView11, imageView12,
+                    homeRedPawns, homeRed, gridPageGame1);
 
-                actualPositionOfBlue = moves.pawnBeatBluePawn(actualPositionOfGreen, actualPositionOfBlue,
-                        roadOfGreenPawns, roadOfBluePawns,
-                        imageView13, imageView14, imageView15, imageView16,
-                        homeBluePawns, homeBlue, gridPageGame1);
+            actualPositionOfBlue = moves.pawnBeatBluePawn(actualPositionOfGreen, actualPositionOfBlue,
+                    roadOfGreenPawns, roadOfBluePawns,
+                    imageView13, imageView14, imageView15, imageView16,
+                    homeBluePawns, homeBlue, gridPageGame1);
 
-                //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+            //This method check who Player's won
+            moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                    buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame1);
 
-                //This method decided about able or disable buttons depending of turn and full of bases
-                moves.buttonsAbleAndDisable(baseOfGreenPawns, baseOfYellowPawns, baseOfBluePawns, baseOfRedPawns,
-                        buttonOfGreen, buttonOfRed, buttonOfBlue, buttonOfYellow, ranking);
+            //This method decided about able or disable buttons depending of turn and full of bases
+            moves.buttonsAbleAndDisable(baseOfGreenPawns, baseOfYellowPawns, baseOfBluePawns, baseOfRedPawns,
+                    buttonOfGreen, buttonOfRed, buttonOfBlue, buttonOfYellow, ranking);
 
-                //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfRed, buttonOfBlue, buttonOfGreen, numbersOfPlayers);
-            }
+            //This method decided about moves pawns belong to computer
+            moves.computerMove(buttonOfRed, buttonOfBlue, buttonOfGreen, numbersOfPlayers);
         });
-        buttonOfRed.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfRed, gridPageGame1);
+        buttonOfRed.setOnAction(event -> {
+            //This method generatet and display dice result
+            int result = dice.generatedAndDisplayResultForComputerPlayer(actualPositionOfRed, level, labelOfRed, gridPageGame1);
 
-                // This method decides if the pawn can leave the base
-                int startPositionFromMethod = (moves.pawnsMove(result, baseOfRedPawns, homeRedPawns,
-                        imageView9, imageView10, imageView11, imageView12,
-                        roadOfRedPawns, gridPageGame1, actualPositionOfRed));
-                actualPositionOfRed = startPositionFromMethod;
+            // This method decides if the pawn can leave the base
+            int startPositionFromMethod = (moves.pawnsMove(result, baseOfRedPawns, homeRedPawns,
+                    imageView9, imageView10, imageView11, imageView12,
+                    roadOfRedPawns, gridPageGame1, actualPositionOfRed));
+            actualPositionOfRed = startPositionFromMethod;
 
-                // This method decides move pawn outside of base
-                startPositionFromMethod = moves.moveFromBase(result, homeRedPawns, baseOfRedPawns,
-                        imageView9, imageView10, imageView11, imageView12,
-                        roadOfRedPawns, gridPageGame1, actualPositionOfRed);
-                actualPositionOfRed = startPositionFromMethod;
+            // This method decides move pawn outside of base
+            startPositionFromMethod = moves.moveFromBase(result, homeRedPawns, baseOfRedPawns,
+                    imageView9, imageView10, imageView11, imageView12,
+                    roadOfRedPawns, gridPageGame1, actualPositionOfRed);
+            actualPositionOfRed = startPositionFromMethod;
 
-                //These three methods analyze the capture of a pawn by a pawn in motion
-                actualPositionOfYellow = moves.pawnBeatYellowPawn(actualPositionOfRed, actualPositionOfYellow,
-                        roadOfRedPawns, roadOfYellowPawns,
-                        imageView1, imageView2, imageView3, imageView4,
-                        homeYellowPawns, homeYellow, gridPageGame1);
+            //These three methods analyze the capture of a pawn by a pawn in motion
+            actualPositionOfYellow = moves.pawnBeatYellowPawn(actualPositionOfRed, actualPositionOfYellow,
+                    roadOfRedPawns, roadOfYellowPawns,
+                    imageView1, imageView2, imageView3, imageView4,
+                    homeYellowPawns, homeYellow, gridPageGame1);
 
-                actualPositionOfGreen = moves.pawnBeatGreenPawn(actualPositionOfRed, actualPositionOfGreen,
-                        roadOfRedPawns, roadOfGreenPawns,
-                        imageView5, imageView6, imageView7, imageView8,
-                        homeGreenPawns, homeGreen, gridPageGame1);
+            actualPositionOfGreen = moves.pawnBeatGreenPawn(actualPositionOfRed, actualPositionOfGreen,
+                    roadOfRedPawns, roadOfGreenPawns,
+                    imageView5, imageView6, imageView7, imageView8,
+                    homeGreenPawns, homeGreen, gridPageGame1);
 
-                actualPositionOfBlue = moves.pawnBeatBluePawn(actualPositionOfRed, actualPositionOfBlue,
-                        roadOfRedPawns, roadOfBluePawns,
-                        imageView13, imageView14, imageView15, imageView16,
-                        homeBluePawns, homeBlue, gridPageGame1);
+            actualPositionOfBlue = moves.pawnBeatBluePawn(actualPositionOfRed, actualPositionOfBlue,
+                    roadOfRedPawns, roadOfBluePawns,
+                    imageView13, imageView14, imageView15, imageView16,
+                    homeBluePawns, homeBlue, gridPageGame1);
 
-                //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+            //This method check who Player's won
+            moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                    buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame1);
 
-                //This method decided about able or disable buttons depending of turn and full of bases
-                moves.buttonsAbleAndDisable(baseOfRedPawns, baseOfBluePawns, baseOfYellowPawns, baseOfGreenPawns,
-                        buttonOfRed, buttonOfBlue, buttonOfYellow, buttonOfGreen, ranking);
+            //This method decided about able or disable buttons depending of turn and full of bases
+            moves.buttonsAbleAndDisable(baseOfRedPawns, baseOfBluePawns, baseOfYellowPawns, baseOfGreenPawns,
+                    buttonOfRed, buttonOfBlue, buttonOfYellow, buttonOfGreen, ranking);
 
-                //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfBlue, buttonOfGreen, buttonOfRed, numbersOfPlayers);
-            }
+            //This method decided about moves pawns belong to computer
+            moves.computerMove(buttonOfBlue, buttonOfGreen, buttonOfRed, numbersOfPlayers);
         });
-        buttonOfBlue.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfBlue, gridPageGame1);
+        buttonOfBlue.setOnAction(event -> {
+            //This method generatet and display dice result
+            int result = dice.generatedAndDisplayResultForComputerPlayer(actualPositionOfBlue, level, labelOfBlue, gridPageGame1);
 
-                // This method decides if the pawn can leave the base
-                int startPositionFromMethod = (moves.pawnsMove(result, baseOfBluePawns, homeBluePawns,
-                        imageView13, imageView14, imageView15, imageView16,
-                        roadOfBluePawns, gridPageGame1, actualPositionOfBlue));
-                actualPositionOfBlue = startPositionFromMethod;
+            // This method decides if the pawn can leave the base
+            int startPositionFromMethod = (moves.pawnsMove(result, baseOfBluePawns, homeBluePawns,
+                    imageView13, imageView14, imageView15, imageView16,
+                    roadOfBluePawns, gridPageGame1, actualPositionOfBlue));
+            actualPositionOfBlue = startPositionFromMethod;
 
-                // This method decides move pawn outside of base
-                startPositionFromMethod = moves.moveFromBase(result, homeBluePawns, baseOfBluePawns,
-                        imageView13, imageView14, imageView15, imageView16,
-                        roadOfBluePawns, gridPageGame1, actualPositionOfBlue);
-                actualPositionOfBlue = startPositionFromMethod;
+            // This method decides move pawn outside of base
+            startPositionFromMethod = moves.moveFromBase(result, homeBluePawns, baseOfBluePawns,
+                    imageView13, imageView14, imageView15, imageView16,
+                    roadOfBluePawns, gridPageGame1, actualPositionOfBlue);
+            actualPositionOfBlue = startPositionFromMethod;
 
-                //These three methods analyze the capture of a pawn by a pawn in motion
-                actualPositionOfYellow = moves.pawnBeatYellowPawn(actualPositionOfBlue, actualPositionOfYellow,
-                        roadOfBluePawns, roadOfYellowPawns,
-                        imageView1, imageView2, imageView3, imageView4,
-                        homeYellowPawns, homeYellow, gridPageGame1);
+            //These three methods analyze the capture of a pawn by a pawn in motion
+            actualPositionOfYellow = moves.pawnBeatYellowPawn(actualPositionOfBlue, actualPositionOfYellow,
+                    roadOfBluePawns, roadOfYellowPawns,
+                    imageView1, imageView2, imageView3, imageView4,
+                    homeYellowPawns, homeYellow, gridPageGame1);
 
-                actualPositionOfGreen = moves.pawnBeatGreenPawn(actualPositionOfBlue, actualPositionOfGreen,
-                        roadOfBluePawns, roadOfGreenPawns,
-                        imageView5, imageView6, imageView7, imageView8,
-                        homeGreenPawns, homeGreen, gridPageGame1);
+            actualPositionOfGreen = moves.pawnBeatGreenPawn(actualPositionOfBlue, actualPositionOfGreen,
+                    roadOfBluePawns, roadOfGreenPawns,
+                    imageView5, imageView6, imageView7, imageView8,
+                    homeGreenPawns, homeGreen, gridPageGame1);
 
-                actualPositionOfRed = moves.pawnBeatRedPawn(actualPositionOfBlue, actualPositionOfRed,
-                        roadOfBluePawns, roadOfRedPawns,
-                        imageView9, imageView10, imageView11, imageView12,
-                        homeRedPawns, homeRed, gridPageGame1);
+            actualPositionOfRed = moves.pawnBeatRedPawn(actualPositionOfBlue, actualPositionOfRed,
+                    roadOfBluePawns, roadOfRedPawns,
+                    imageView9, imageView10, imageView11, imageView12,
+                    homeRedPawns, homeRed, gridPageGame1);
 
-                //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+            //This method check who Player's won
+            moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                    buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame1);
 
-                //This method decided about able or disable buttons depending of turn and full of bases
-                moves.buttonsAbleAndDisable(baseOfBluePawns, baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns,
-                        buttonOfBlue, buttonOfYellow, buttonOfGreen, buttonOfRed, ranking);
+            //This method decided about able or disable buttons depending of turn and full of bases
+            moves.buttonsAbleAndDisable(baseOfBluePawns, baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns,
+                    buttonOfBlue, buttonOfYellow, buttonOfGreen, buttonOfRed, ranking);
 
-                //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
-            }
+            //This method decided about moves pawns belong to computer
+            moves.computerMove(buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
         });
-
-        pageGame1 = new Scene(gridPageGame1, 960, height, Color.WHITESMOKE);
+        endGame.setOnAction(e -> {
+            Scene pageIntroduce = getPageIntroduce();
+            window.setScene(pageIntroduce);
+        });
+        Scene pageGame1 = new Scene(gridPageGame1, 960, height, Color.WHITESMOKE);
         return pageGame1;
     }
 
-    public Scene getPageGame2(Stage window, Scene pageIntroduce) {
+    public Scene getPageGame2(String namePlayer1, String namePlayer2, String level) {
+        GridPane gridPageGame2 = new GridPane();
         int numbersOfPlayers = 2;
         //List of yellow pawns in home
         List<Pawn> homeYellowPawns = new ArrayList<>();
@@ -690,8 +799,8 @@ public class Pages {
         gridPageGame2.setGridLinesVisible(false); //Powoduje widocznośc lub niewidoczność poidzału planszy kolumny iw iersze
 
         //Buttons
-        Button buttonOfYellow = new Button("Yellow get move");
-        Button buttonOfGreen = new Button("Green get move");
+        Button buttonOfYellow = new Button(namePlayer1 + " get move");
+        Button buttonOfGreen = new Button(namePlayer2 + " get move");
         Button buttonOfRed = new Button("Red get move");
         Button buttonOfBlue = new Button("Blue get move");
         Button endGame = new Button("End Game");
@@ -700,6 +809,13 @@ public class Pages {
         Label labelOfGreen = new Label("Dice result:" + textDice);
         Label labelOfRed = new Label("Dice result:" + textDice);
         Label labelOfBlue = new Label("Dice result:" + textDice);
+        Label whoWin = new Label("Ranking: ");
+        Label levelOfGame = new Label("Level: " + level);
+        Label firstPlace = new Label();
+        Label secendPlace = new Label();
+        Label thirdPlace = new Label();
+        Label fourthPlace = new Label();
+        Label endGames = new Label();
 
         GridPane.setConstraints(buttonOfYellow, 2, 0, 2, 2);
         GridPane.setConstraints(buttonOfGreen, 11, 0, 2, 2);
@@ -711,6 +827,12 @@ public class Pages {
         GridPane.setConstraints(labelOfBlue, 2, 10, 2, 1);
         GridPane.setConstraints(endGame, 13, 10, 3, 1);
         GridPane.setConstraints(whoStart, 13, 1, 3, 1);
+        GridPane.setConstraints(whoWin, 13, 4, 3, 1);
+        GridPane.setConstraints(levelOfGame, 13, 2, 3, 1);
+        GridPane.setConstraints(firstPlace, 13, 5, 3, 1);
+        GridPane.setConstraints(secendPlace, 13, 6, 3, 1);
+        GridPane.setConstraints(thirdPlace, 13, 7, 3, 1);
+        GridPane.setConstraints(fourthPlace, 13, 8, 3, 1);
 
         gridPageGame2.setMargin(endGame, new Insets(0, 100, 10, 0));
 
@@ -728,13 +850,14 @@ public class Pages {
             }
         });
 
-        gridPageGame2.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart);
+        gridPageGame2.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue,
+                labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart, endGame, whoWin, levelOfGame);
 
         buttonOfYellow.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfYellow, gridPageGame2);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfYellow, level, labelOfYellow, gridPageGame2);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfYellowPawns, homeYellowPawns,
@@ -769,17 +892,18 @@ public class Pages {
                         buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame2);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfRed,buttonOfBlue,buttonOfGreen,numbersOfPlayers);
+                moves.computerMove(buttonOfRed, buttonOfBlue, buttonOfGreen, numbersOfPlayers);
             }
         });
         buttonOfGreen.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfGreen, gridPageGame2);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfGreen, level, labelOfGreen, gridPageGame2);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfGreenPawns, homeGreenPawns,
@@ -814,17 +938,18 @@ public class Pages {
                         buttonOfGreen, buttonOfRed, buttonOfBlue, buttonOfYellow, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame2);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfRed,buttonOfBlue,buttonOfYellow,numbersOfPlayers);
+                moves.computerMove(buttonOfRed, buttonOfBlue, buttonOfYellow, numbersOfPlayers);
             }
         });
         buttonOfRed.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfRed, gridPageGame2);
+                int result = dice.generatedAndDisplayResultForComputerPlayer(actualPositionOfRed, level, labelOfRed, gridPageGame2);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfRedPawns, homeRedPawns,
@@ -859,17 +984,18 @@ public class Pages {
                         buttonOfRed, buttonOfBlue, buttonOfYellow, buttonOfGreen, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame2);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfBlue,buttonOfRed,buttonOfYellow,numbersOfPlayers);
+                moves.computerMove(buttonOfBlue, buttonOfRed, buttonOfYellow, numbersOfPlayers);
             }
         });
         buttonOfBlue.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfBlue, gridPageGame2);
+                int result = dice.generatedAndDisplayResultForComputerPlayer(actualPositionOfBlue, level, labelOfBlue, gridPageGame2);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfBluePawns, homeBluePawns,
@@ -904,20 +1030,25 @@ public class Pages {
                         buttonOfBlue, buttonOfYellow, buttonOfGreen, buttonOfRed, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame2);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfRed,buttonOfBlue,buttonOfYellow,numbersOfPlayers);
+                moves.computerMove(buttonOfRed, buttonOfBlue, buttonOfYellow, numbersOfPlayers);
             }
         });
-
-        pageGame2 = new Scene(gridPageGame2, 960, height, Color.WHITESMOKE);
+        endGame.setOnAction(e -> {
+            Scene pageIntroduce = getPageIntroduce();
+            window.setScene(pageIntroduce);
+        });
+        Scene pageGame2 = new Scene(gridPageGame2, 960, height, Color.WHITESMOKE);
         return pageGame2;
     }
 
-    public Scene getPageGame3(Stage window, Scene pageIntroduce) {
+    public Scene getPageGame3(String namePlayer1, String namePlayer2, String namePlayer3, String level) {
+        GridPane gridPageGame3 = new GridPane();
         int numbersOfPlayers = 3;
-        //List of yellow pawns in home
+
         List<Pawn> homeYellowPawns = new ArrayList<>();
         Pawn yellow1 = new Pawn();
         Pawn yellow2 = new Pawn();
@@ -929,7 +1060,6 @@ public class Pages {
         homeYellowPawns.add(yellow3);
         homeYellowPawns.add(yellow4);
 
-        //List of red pawns in home
         List<Pawn> homeRedPawns = new ArrayList<>();
         Pawn red1 = new Pawn();
         Pawn red2 = new Pawn();
@@ -941,7 +1071,6 @@ public class Pages {
         homeRedPawns.add(red3);
         homeRedPawns.add(red4);
 
-        //List of green pawns in home
         List<Pawn> homeGreenPawns = new ArrayList<>();
         Pawn green1 = new Pawn();
         Pawn green2 = new Pawn();
@@ -953,7 +1082,6 @@ public class Pages {
         homeGreenPawns.add(green3);
         homeGreenPawns.add(green4);
 
-        //List of blue pawns in home
         List<Pawn> homeBluePawns = new ArrayList<>();
         Pawn blue1 = new Pawn();
         Pawn blue2 = new Pawn();
@@ -1004,8 +1132,6 @@ public class Pages {
         Map<Integer, Point> roadOfRedPawns = redList.positionForRedPawns();
         ListOfPositions blueList = new ListOfPositions();
         Map<Integer, Point> roadOfBluePawns = blueList.positionForBluePawns();
-
-        //********************************************************************
 
         //Ustawienie tła (planszy)
         gridPageGame3.setAlignment(Pos.TOP_LEFT);
@@ -1072,9 +1198,9 @@ public class Pages {
         gridPageGame3.setGridLinesVisible(false); //Powoduje widocznośc lub niewidoczność poidzału planszy kolumny iw iersze
 
         //Buttons
-        Button buttonOfYellow = new Button("Yellow get move");
-        Button buttonOfGreen = new Button("Green get move");
-        Button buttonOfRed = new Button("Red get move");
+        Button buttonOfYellow = new Button(namePlayer1 + " get move");
+        Button buttonOfGreen = new Button(namePlayer2 + " get move");
+        Button buttonOfRed = new Button(namePlayer3 + " get move");
         Button buttonOfBlue = new Button("Blue get move");
         Button endGame = new Button("End Game");
         Button whoStart = new Button("Who start");
@@ -1082,6 +1208,13 @@ public class Pages {
         Label labelOfGreen = new Label("Dice result:" + textDice);
         Label labelOfRed = new Label("Dice result:" + textDice);
         Label labelOfBlue = new Label("Dice result:" + textDice);
+        Label whoWin = new Label("Ranking: ");
+        Label levelOfGame = new Label("Level: " + level);
+        Label firstPlace = new Label();
+        Label secendPlace = new Label();
+        Label thirdPlace = new Label();
+        Label fourthPlace = new Label();
+        Label endGames = new Label();
 
         GridPane.setConstraints(buttonOfYellow, 2, 0, 2, 2);
         GridPane.setConstraints(buttonOfGreen, 11, 0, 2, 2);
@@ -1093,7 +1226,12 @@ public class Pages {
         GridPane.setConstraints(labelOfBlue, 2, 10, 2, 1);
         GridPane.setConstraints(endGame, 13, 10, 3, 1);
         GridPane.setConstraints(whoStart, 13, 1, 3, 1);
-
+        GridPane.setConstraints(whoWin, 13, 4, 3, 1);
+        GridPane.setConstraints(levelOfGame, 13, 2, 3, 1);
+        GridPane.setConstraints(firstPlace, 13, 5, 3, 1);
+        GridPane.setConstraints(secendPlace, 13, 6, 3, 1);
+        GridPane.setConstraints(thirdPlace, 13, 7, 3, 1);
+        GridPane.setConstraints(fourthPlace, 13, 8, 3, 1);
         gridPageGame3.setMargin(endGame, new Insets(0, 100, 10, 0));
 
         buttonOfYellow.setDisable(true);
@@ -1110,14 +1248,14 @@ public class Pages {
             }
         });
 
-        gridPageGame3.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart);
-
+        gridPageGame3.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue,
+                labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart, endGame, whoWin, levelOfGame);
 
         buttonOfYellow.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfYellow, gridPageGame3);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfYellow, level, labelOfYellow, gridPageGame3);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfYellowPawns, homeYellowPawns,
@@ -1152,20 +1290,18 @@ public class Pages {
                         buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame3);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfBlue,buttonOfYellow,buttonOfGreen,numbersOfPlayers);
-//                if (buttonOfBlue.isDisable() == false) {
-//                    buttonOfBlue.fire();
-//                }
+                moves.computerMove(buttonOfBlue, buttonOfYellow, buttonOfGreen, numbersOfPlayers);
             }
         });
         buttonOfGreen.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfGreen, gridPageGame3);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfGreen, level, labelOfGreen, gridPageGame3);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfGreenPawns, homeGreenPawns,
@@ -1200,20 +1336,18 @@ public class Pages {
                         buttonOfGreen, buttonOfRed, buttonOfBlue, buttonOfYellow, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame3);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfBlue,buttonOfYellow,buttonOfGreen,numbersOfPlayers);
-//                if (buttonOfBlue.isDisable() == false) {
-//                    buttonOfBlue.fire();
-//                }
+                moves.computerMove(buttonOfBlue, buttonOfYellow, buttonOfGreen, numbersOfPlayers);
             }
         });
         buttonOfRed.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfRed, gridPageGame3);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfRed, level, labelOfRed, gridPageGame3);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfRedPawns, homeRedPawns,
@@ -1248,22 +1382,18 @@ public class Pages {
                         buttonOfRed, buttonOfBlue, buttonOfYellow, buttonOfGreen, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame3);
 
                 //This method decided about moves pawns belong to computer
-                moves.computerMove(buttonOfBlue,buttonOfYellow,buttonOfGreen,numbersOfPlayers);
-
-//                if (buttonOfBlue.isDisable() == false) {
-//                    buttonOfBlue.fire();
-//                }
-
+                moves.computerMove(buttonOfBlue, buttonOfYellow, buttonOfGreen, numbersOfPlayers);
             }
         });
         buttonOfBlue.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfBlue, gridPageGame3);
+                int result = dice.generatedAndDisplayResultForComputerPlayer(actualPositionOfBlue, level, labelOfBlue, gridPageGame3);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfBluePawns, homeBluePawns,
@@ -1298,15 +1428,21 @@ public class Pages {
                         buttonOfBlue, buttonOfYellow, buttonOfGreen, buttonOfRed, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
-
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame3);
             }
         });
-        pageGame3 = new Scene(gridPageGame3, 960, height, Color.WHITESMOKE);
+        endGame.setOnAction(e -> {
+            Scene pageIntroduce = getPageIntroduce();
+            window.setScene(pageIntroduce);
+        });
+        Scene pageGame3 = new Scene(gridPageGame3, 960, height, Color.WHITESMOKE);
         return pageGame3;
     }
 
-    public Scene getPageGame4(Stage window, Scene pageIntroduce) {
+
+    public Scene getPageGame4(String namePlayer1, String namePlayer2, String namePlayer3, String namePlayer4, String level) {
+        GridPane gridPageGame4 = new GridPane();
         int numbersOfPlayers = 4;
         //List of yellow pawns in home
         List<Pawn> homeYellowPawns = new ArrayList<>();
@@ -1463,16 +1599,22 @@ public class Pages {
         gridPageGame4.setGridLinesVisible(false); //Powoduje widocznośc lub niewidoczność poidzału planszy kolumny iw iersze
 
         //Buttons
-        Button buttonOfYellow = new Button("Yellow get move");
-        Button buttonOfGreen = new Button("Green get move");
-        Button buttonOfRed = new Button("Red get move");
-        Button buttonOfBlue = new Button("Blue get move");
+        Button buttonOfYellow = new Button(namePlayer1 + " get move");
+        Button buttonOfGreen = new Button(namePlayer2 + " get move");
+        Button buttonOfRed = new Button(namePlayer3 + " get move");
+        Button buttonOfBlue = new Button(namePlayer4 + " get move");
         Button endGame = new Button("End Game");
         Button whoStart = new Button("Who start");
         Label labelOfYellow = new Label("Dice result:" + textDice);
         Label labelOfGreen = new Label("Dice result:" + textDice);
         Label labelOfRed = new Label("Dice result:" + textDice);
         Label labelOfBlue = new Label("Dice result:" + textDice);
+        Label whoWin = new Label("Ranking: ");
+        Label levelOfGame = new Label("Level: " + level);
+        Label firstPlace = new Label();
+        Label secendPlace = new Label();
+        Label thirdPlace = new Label();
+        Label fourthPlace = new Label();
 
         GridPane.setConstraints(buttonOfYellow, 2, 0, 2, 2);
         GridPane.setConstraints(buttonOfGreen, 11, 0, 2, 2);
@@ -1484,18 +1626,20 @@ public class Pages {
         GridPane.setConstraints(labelOfBlue, 2, 10, 2, 1);
         GridPane.setConstraints(endGame, 13, 10, 3, 1);
         GridPane.setConstraints(whoStart, 13, 1, 3, 1);
-
+        GridPane.setConstraints(whoWin, 13, 4, 3, 1);
+        GridPane.setConstraints(levelOfGame, 13, 2, 3, 1);
+        GridPane.setConstraints(firstPlace, 13, 5, 3, 1);
+        GridPane.setConstraints(secendPlace, 13, 6, 3, 1);
+        GridPane.setConstraints(thirdPlace, 13, 7, 3, 1);
+        GridPane.setConstraints(fourthPlace, 13, 8, 3, 1);
         gridPageGame4.setMargin(endGame, new Insets(0, 100, 10, 0));
 
-        // Set player who start the game
-        //moves.whoStart(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, numbersOfPlayers);
         buttonOfYellow.setDisable(true);
         buttonOfGreen.setDisable(true);
         buttonOfRed.setDisable(true);
         buttonOfBlue.setDisable(true);
 
         // Set player who start the game
-
         whoStart.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -1504,14 +1648,14 @@ public class Pages {
             }
         });
 
-        gridPageGame4.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart);
-
+        gridPageGame4.getChildren().addAll(buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue,
+                labelOfYellow, labelOfGreen, labelOfRed, labelOfBlue, whoStart, endGame, whoWin, levelOfGame);
 
         buttonOfYellow.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfYellow, gridPageGame4);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfYellow, level, labelOfYellow, gridPageGame4);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfYellowPawns, homeYellowPawns,
@@ -1546,14 +1690,15 @@ public class Pages {
                         buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame4);
             }
         });
         buttonOfGreen.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfGreen, gridPageGame4);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfGreen, level, labelOfGreen, gridPageGame4);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfGreenPawns, homeGreenPawns,
@@ -1588,14 +1733,15 @@ public class Pages {
                         buttonOfGreen, buttonOfRed, buttonOfBlue, buttonOfYellow, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame4);
             }
         });
         buttonOfRed.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfRed, gridPageGame4);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfRed, level, labelOfRed, gridPageGame4);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfRedPawns, homeRedPawns,
@@ -1630,15 +1776,15 @@ public class Pages {
                         buttonOfRed, buttonOfBlue, buttonOfYellow, buttonOfGreen, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
-
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame4);
             }
         });
         buttonOfBlue.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 //This method generatet and display dice result
-                int result = dice.generatedAndDisplayResultForEachPlayer(labelOfBlue, gridPageGame4);
+                int result = dice.generatedAndDisplayResultForHumanPlayer(actualPositionOfBlue, level, labelOfBlue, gridPageGame4);
 
                 // This method decides if the pawn can leave the base
                 int startPositionFromMethod = (moves.pawnsMove(result, baseOfBluePawns, homeBluePawns,
@@ -1673,22 +1819,15 @@ public class Pages {
                         buttonOfBlue, buttonOfYellow, buttonOfGreen, buttonOfRed, ranking);
 
                 //This method check who Player's won
-                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking);
+                moves.checkWinner(baseOfYellowPawns, baseOfGreenPawns, baseOfRedPawns, baseOfBluePawns, ranking,
+                        buttonOfYellow, buttonOfGreen, buttonOfRed, buttonOfBlue, firstPlace, secendPlace, thirdPlace, fourthPlace, gridPageGame4);
             }
         });
-        // endGame.setOnAction(e -> window.setScene(pageIntroduce));
-
-        pageGame4 = new Scene(gridPageGame4, 960, height, Color.WHITESMOKE);
+        endGame.setOnAction(e -> {
+            Scene pageIntroduce = getPageIntroduce();
+        });
+        Scene pageGame4 = new Scene(gridPageGame4, 960, height, Color.WHITESMOKE);
         return pageGame4;
     }
-
-    Scene pageOptions;
-    StackPane stackPanePageOptions = new StackPane();
-
-
-
-
-
-
 
 }

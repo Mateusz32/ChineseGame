@@ -1,6 +1,7 @@
 package com.chinesegame;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
@@ -241,16 +242,21 @@ public class Moves {
     }
 
     public void checkWinner(List basePawns1, List basePawns2, List basePawns3, List basePawns4,
-                            List ranking) {
+                            List ranking, Button button1, Button button2, Button button3, Button button4,
+                            Label label1, Label label2, Label label3, Label label4, GridPane grid) {
+
         if (ranking.contains(basePawns1) == false) {
             if (basePawns1.size() == 4) {
                 ranking.add(basePawns1);
                 if (ranking.size() == 1) {
-                    System.out.println("Yellow win");
+                    label1.setText("1. " + button1.getText().substring(0, button1.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label1);
                 } else if (ranking.size() == 2) {
-                    System.out.println("Yellow 2nd");
+                    label2.setText("2. " + button1.getText().substring(0, button1.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label2);
                 } else if (ranking.size() == 3) {
-                    System.out.println("Yellow 3rd");
+                    label3.setText("3. " + button1.getText().substring(0, button1.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label3);
                 }
             }
         }
@@ -258,11 +264,14 @@ public class Moves {
             if (basePawns2.size() == 4) {
                 ranking.add(basePawns2);
                 if (ranking.size() == 1) {
-                    System.out.println("Green win");
+                    label1.setText("1. " + button2.getText().substring(0, button2.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label1);
                 } else if (ranking.size() == 2) {
-                    System.out.println("Green 2nd");
+                    label2.setText("2. " + button2.getText().substring(0, button2.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label2);
                 } else if (ranking.size() == 3) {
-                    System.out.println("Green 3rd");
+                    label3.setText("3. " + button2.getText().substring(0, button2.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label3);
                 }
             }
         }
@@ -270,11 +279,14 @@ public class Moves {
             if (basePawns3.size() == 4) {
                 ranking.add(basePawns3);
                 if (ranking.size() == 1) {
-                    System.out.println("Red win");
+                    label1.setText("1. " + button3.getText().substring(0, button3.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label1);
                 } else if (ranking.size() == 2) {
-                    System.out.println("Red 2nd");
+                    label2.setText("2. " + button3.getText().substring(0, button3.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label2);
                 } else if (ranking.size() == 3) {
-                    System.out.println("Red 3rd");
+                    label3.setText("3. " + button3.getText().substring(0, button3.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label3);
                 }
             }
         }
@@ -282,23 +294,30 @@ public class Moves {
             if (basePawns4.size() == 4) {
                 ranking.add(basePawns4);
                 if (ranking.size() == 1) {
-                    System.out.println("Blue win");
+                    label1.setText("1. " + button4.getText().substring(0, button4.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label1);
                 } else if (ranking.size() == 2) {
-                    System.out.println("Blue 2nd");
+                    label2.setText("2. " + button4.getText().substring(0, button4.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label2);
                 } else if (ranking.size() == 3) {
-                    System.out.println("Blue 3rd");
+                    label3.setText("3. " + button4.getText().substring(0, button4.getText().indexOf(' ')));
+                    grid.getChildren().addAll(label3);
                 }
             }
         }
         if (ranking.size() == 3) {
             if (ranking.contains(basePawns1) == false) {
-                System.out.println("Yellow 4th");
+                label4.setText("4. " + button1.getText().substring(0, button1.getText().indexOf(' ')));
+                grid.getChildren().addAll(label4);
             } else if (ranking.contains(basePawns2) == false) {
-                System.out.println("Green 4th");
+                label4.setText("4. " + button2.getText().substring(0, button2.getText().indexOf(' ')));
+                grid.getChildren().addAll(label4);
             } else if (ranking.contains(basePawns3) == false) {
-                System.out.println("Red 4th");
+                label4.setText("4. " + button3.getText().substring(0, button3.getText().indexOf(' ')));
+                grid.getChildren().addAll(label4);
             } else if (ranking.contains(basePawns4) == false) {
-                System.out.println("Blue 4th");
+                label4.setText("4. " + button4.getText().substring(0, button4.getText().indexOf(' ')));
+                grid.getChildren().addAll(label4);
             }
             System.out.println("Koniec gry");
         }
